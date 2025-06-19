@@ -1,0 +1,69 @@
+server:
+  port: 8080
+
+logging:
+  level:
+    org.springframework.web: DEBUG
+    org.springframework.security: DEBUG
+
+keycloak:
+  client:
+    id: invimaapp
+    secret: vO80rEC4luarQQ2DVMZyehKte9lUUc1k
+    realm: Invima
+    auth-server-url: http://keycloak.aks-dev.internal/
+    grant-type: password
+    grant-type-app: client_credentials
+    users-path: /users
+    #id: invimaapp
+    #secret: fVb04alWLRXWk0To5VHW8AhkMggqY1Xz
+    #realm: Invima
+    #auth-server-url: https://keycloak-infra-transversal.apps.ocp4.invima.gov.co/auth/
+    #grant-type: password
+    #grant-type-app: client_credentials
+    #users-path: /users
+menu:
+  client:
+    base: http://srvmenu.aks-dev.internal
+    prefix: /v1/
+    service: /menu/informacion
+    userInfo: /usuario/informacion
+
+user:
+  client:
+    base: http://srvusuario.aks-dev.internal
+    prefix: /v1/Usuario
+    service: /guardarUsuarioPersona
+    searchbyid: /consultaId
+    updatepassword: /contrasena/
+    resetPassword: /reestablecerContrasena
+    searchByEmail: /consultaCorreo
+    employeeDependencyRol: /FuncionarioDependenciaRol/
+
+spring:
+  datasource:
+    url: jdbc:sqlserver://inv-prod-eu2-sqlmi-newplataforma-qa.12bd9ac29611.database.windows.net;databaseName=MAESTRA
+    username: Bit512
+    password: InVimA20#24Mt
+    hikari:
+      connection-timeout: 30000  # Tiempo de espera de conexión en milisegundos
+      idle-timeout: 600000       # Tiempo máximo de inactividad para las conexiones en milisegundos
+      max-lifetime: 1800000      # Tiempo máximo de vida de cada conexión en el pool
+      minimum-idle: 10           # Número mínimo de conexiones inactivas en el pool
+      maximum-pool-size: 20      # Número máximo de conexiones activas en el pool
+      class-loader: com.microsoft.sqlserver.jdbc.SQLServerDriver
+  jpa:
+    hibernate:
+      ddl-auto: none
+    properties:
+      hibernate:
+        default_schema: dbo
+        format_sql: true
+        show_sql: true
+        dialect: org.hibernate.dialect.SQLServerDialect
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          #issuer-uri: https://keycloak-infra-transversal.apps.ocp4.invima.gov.co/auth/realms/Invima
+          issuer-uri: http://keycloak.aks-dev.internal/realms/Invima

@@ -1,0 +1,57 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: security-provider
+  namespace: default
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: security-provider
+  template:
+    metadata:
+      labels:
+        app: security-provider
+    spec:
+      containers:
+        - name: security-provider-app
+          image: acrinvimadev.azurecr.io/security-provider:1.0.6
+          ports:
+            - containerPort: 8080
+          resources:
+            requests:
+              memory: "512Mi"
+              cpu: "500m"
+            limits:
+              memory: "1Gi"
+              cpu: "1"
+            livenessProbe:
+              httpGet:
+                path: /health
+                port: 8080
+              initialDelaySeconds: 60
+              periodSeconds: 60
+            imagePullSecrets:
+              - name: acr-secret
+            restartPolicy: Always
+            strategy:
+              type: RollingUpdate
+              rollingUpdate:
+                maxSurge: 1
+                maxUnavailable: 1
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: security-provider-clusterip
+  namespace: default
+spec:
+  type: ClusterIP
+  selector:
+    app: security-provider
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8080
+---
