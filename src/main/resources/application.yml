@@ -8,20 +8,13 @@ logging:
 
 keycloak:
   client:
-    id: invimaapp
+    id: sicdiapp
     secret: vO80rEC4luarQQ2DVMZyehKte9lUUc1k
-    realm: Invima
-    auth-server-url: http://keycloak.aks-dev.internal/
+    realm: sso-sicie
+    auth-server-url: http://10.23.228.150:7780/
     grant-type: password
     grant-type-app: client_credentials
     users-path: /users
-    #id: invimaapp
-    #secret: fVb04alWLRXWk0To5VHW8AhkMggqY1Xz
-    #realm: Invima
-    #auth-server-url: https://keycloak-infra-transversal.apps.ocp4.invima.gov.co/auth/
-    #grant-type: password
-    #grant-type-app: client_credentials
-    #users-path: /users
 menu:
   client:
     base: http://srvmenu.aks-dev.internal
@@ -42,28 +35,37 @@ user:
 
 spring:
   datasource:
-    url: jdbc:sqlserver://inv-prod-eu2-sqlmi-newplataforma-qa.12bd9ac29611.database.windows.net;databaseName=MAESTRA
-    username: Bit512
-    password: InVimA20#24Mt
+    url: jdbc:oracle:thin:@(DESCRIPTION =(ADDRESS = (PROTOCOL = TCP)(HOST = 10.23.228.150)(PORT = 1521))(CONNECT_DATA =(SERVER = DEDICATED)(SERVICE_NAME = RSISDOC)))
+    username: DOC
+    password: "***Sicdi2026+-*"
+    type: com.zaxxer.hikari.HikariDataSource
+    driver-class-name: oracle.jdbc.OracleDriver
+    connection-timeout: 20000
+    idle-timeout: 300000
+    max-lifetime: 1200000
+    minimum-idle: 20
+    maximum-pool-size: 100
+    auto-commit: true
+    read-only: true
+    pool-name: SICDI-HikariPool
     hikari:
-      connection-timeout: 30000  # Tiempo de espera de conexión en milisegundos
-      idle-timeout: 600000       # Tiempo máximo de inactividad para las conexiones en milisegundos
-      max-lifetime: 1800000      # Tiempo máximo de vida de cada conexión en el pool
-      minimum-idle: 10           # Número mínimo de conexiones inactivas en el pool
-      maximum-pool-size: 20      # Número máximo de conexiones activas en el pool
-      class-loader: com.microsoft.sqlserver.jdbc.SQLServerDriver
+      connection-test-query: SELECT 1 FROM DUAL
+      initialization-fail-timeout: 10000
+      data-source-properties:
+        cachePrepStmts: true
+        prepStmtCacheSize: 250
+        prepStmtCacheSqlLimit: 2048
   jpa:
     hibernate:
       ddl-auto: none
     properties:
       hibernate:
-        default_schema: dbo
+        default_schema: DOC
         format_sql: true
         show_sql: true
-        dialect: org.hibernate.dialect.SQLServerDialect
+        dialect: org.hibernate.dialect.Oracle12cDialect
   security:
     oauth2:
       resourceserver:
         jwt:
-          #issuer-uri: https://keycloak-infra-transversal.apps.ocp4.invima.gov.co/auth/realms/Invima
-          issuer-uri: http://keycloak.aks-dev.internal/realms/Invima
+          issuer-uri: http://10.23.228.150:7780/realms/sso-sicie
